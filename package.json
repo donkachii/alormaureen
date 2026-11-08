@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "7.0.3",
+    "@sentry/nextjs": "^11.11.0",
     "motion": "14.10.1",
     "next": "16.4.5",
     "react": "19.3.1",

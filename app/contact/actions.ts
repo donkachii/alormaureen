@@ -1,5 +1,6 @@
 "use server";
 
+import * as Sentry from "@sentry/nextjs";
 import { headers } from "next/headers";
 import { Resend } from "resend";
 import { contactSchema, type ContactField, type ContactResult } from "@/lib/contactSchema";
@@ -9,6 +10,14 @@ export async function sendContactMessage(
   input: unknown,
   honeypot: unknown,
 ): Promise<ContactResult> {
+  return Sentry.withServerActionInstrumentation(
+    "sendContactMessage",
+    { headers: await headers() },
+    () => deliverContactMessage(input, honeypot),
+  );
+}
+
+async function deliverContactMessage(input: unknown, honeypot: unknown): Promise<ContactResult> {
   // Bots that fill the hidden field get a normal-looking success and nothing is sent.
   if (honeypot) return { ok: true };
 
@@ -32,6 +41,7 @@ export async function sendContactMessage(
   const { RESEND_API_KEY, CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL } = process.env;
   if (!RESEND_API_KEY || !CONTACT_TO_EMAIL || !CONTACT_FROM_EMAIL) {
     console.error("Contact form: email environment variables are not set.");
+    Sentry.captureMessage("Contact form: email environment variables are not set.", "error");
     return { ok: false, reason: "send-failed" };
   }
 
@@ -54,6 +64,11 @@ export async function sendContactMessage(
 
   if (error) {
     console.error("Contact form: Resend rejected the message.", error.name);
+    // Only the error name goes to Sentry, so nothing from the sender's message leaves the app.
+    Sentry.captureMessage("Contact form: Resend rejected the message.", {
+      level: "error",
+      tags: { resend_error: error.name },
+    });
     return { ok: false, reason: "send-failed" };
   }
 

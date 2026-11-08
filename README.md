@@ -18,12 +18,14 @@ pnpm dev
 
 The site runs at http://localhost:3000. It works without environment variables, but the contact form shows its failure message until email is set up.
 
-| Variable               | What it does                                                                                 |
-| ---------------------- | -------------------------------------------------------------------------------------------- |
-| `RESEND_API_KEY`       | API key from [Resend](https://resend.com/api-keys).                                          |
-| `CONTACT_TO_EMAIL`     | The inbox that receives messages.                                                            |
-| `CONTACT_FROM_EMAIL`   | The sender, on a domain verified in Resend, for example `Portfolio <hello@your-domain.com>`. |
-| `NEXT_PUBLIC_SITE_URL` | The public URL with no trailing slash. Used for metadata, the sitemap and JSON-LD.           |
+| Variable                 | What it does                                                                                           |
+| ------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `RESEND_API_KEY`         | API key from [Resend](https://resend.com/api-keys).                                                    |
+| `CONTACT_TO_EMAIL`       | The inbox that receives messages.                                                                      |
+| `CONTACT_FROM_EMAIL`     | The sender, on a domain verified in Resend, for example `Portfolio <hello@your-domain.com>`.           |
+| `NEXT_PUBLIC_SITE_URL`   | The public URL with no trailing slash. Used for metadata, the sitemap and JSON-LD.                     |
+| `NEXT_PUBLIC_SENTRY_DSN` | Sends errors and traces to Sentry, from the browser and the server. Sentry stays off when it is empty. |
+| `SENTRY_AUTH_TOKEN`      | Uploads source maps to Sentry during `pnpm build`, so stack traces stay readable. Secret.              |
 
 Other commands: `pnpm build`, `pnpm start`, `pnpm lint`, `pnpm typecheck`, `pnpm format`.
 
