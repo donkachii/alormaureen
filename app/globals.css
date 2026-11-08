@@ -1,0 +1,217 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+:root {
+  color-scheme: light;
+  --canvas: #f6f2ea;
+  --surface: #f0ebe0;
+  --ink: #141414;
+  --ink-muted: #5a5650;
+  --accent: #b4472a;
+  --on-accent: #f6f2ea;
+  --rule: #8c857a;
+  --error: #9b1c1c;
+  --todo-bg: #fbefd0;
+  --todo-ink: #7a4b00;
+  --todo-border: #9a6a12;
+  --dur-fast: 200ms;
+  --dur-base: 400ms;
+  --dur-slow: 600ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --canvas: #141311;
+    --surface: #1f1d1a;
+    --ink: #f6f2ea;
+    --ink-muted: #ada79c;
+    --accent: #e8805f;
+    --on-accent: #141311;
+    --rule: #77726a;
+    --error: #f2a0a0;
+    --todo-bg: #3a2c0b;
+    --todo-ink: #f5d58a;
+    --todo-border: #c9a24a;
+  }
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --canvas: #141311;
+  --surface: #1f1d1a;
+  --ink: #f6f2ea;
+  --ink-muted: #ada79c;
+  --accent: #e8805f;
+  --on-accent: #141311;
+  --rule: #77726a;
+  --error: #f2a0a0;
+  --todo-bg: #3a2c0b;
+  --todo-ink: #f5d58a;
+  --todo-border: #c9a24a;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-rule: var(--rule);
+  --color-error: var(--error);
+  --color-todo-bg: var(--todo-bg);
+  --color-todo-ink: var(--todo-ink);
+  --color-todo-border: var(--todo-border);
+  --font-display: var(--font-gloock), Georgia, serif;
+  --font-sans: var(--font-public-sans), system-ui, sans-serif;
+}
+
+@theme {
+  --text-hero: clamp(3.5rem, 14vw, 11rem);
+  --text-hero--line-height: 0.95;
+  /* Sized to its card through container units, so the longest figure never overflows. */
+  --text-number: clamp(3rem, 25cqi, 6.5rem);
+  --text-number--line-height: 1;
+  --text-h1: clamp(2.5rem, 7vw, 5rem);
+  --text-h1--line-height: 1.05;
+  --text-h2: clamp(2rem, 5vw, 3.5rem);
+  --text-h2--line-height: 1.1;
+  --text-teaser: clamp(1.75rem, 4vw, 2.75rem);
+  --text-teaser--line-height: 1.15;
+  --text-statement: clamp(1.5rem, 3.2vw, 2.5rem);
+  --text-statement--line-height: 1.2;
+  --text-h3: clamp(1.375rem, 2.5vw, 1.75rem);
+  --text-h3--line-height: 1.2;
+  --text-lead: clamp(1.25rem, 2.5vw, 1.75rem);
+  --text-lead--line-height: 1.35;
+  --text-body: clamp(1.0625rem, 1.2vw, 1.125rem);
+  --text-body--line-height: 1.6;
+  --text-small: 0.9375rem;
+  --text-small--line-height: 1.5;
+  --spacing-gutter: clamp(1.25rem, 5vw, 4rem);
+  --spacing-section: clamp(4.5rem, 12vw, 10rem);
+  --spacing-tap: 2.75rem;
+  --container-site: 90rem;
+  --container-measure: 65ch;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-synthesis: none;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--on-accent);
+  }
+}
+
+@layer components {
+  .link {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  .link:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  .tap {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--spacing-tap);
+  }
+
+  /* Hero reveal runs in CSS so it needs no hydration and cannot delay LCP. */
+  .hero-line {
+    display: block;
+    animation: hero-rise var(--dur-slow) var(--ease-out) both;
+    animation-delay: calc(var(--line, 0) * 120ms);
+  }
+
+  /* Underline draws in on hover and on keyboard focus. */
+  .draw-underline {
+    position: relative;
+    display: inline-block;
+  }
+
+  .draw-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.08em;
+    height: 2px;
+    background-color: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+
+  .group:hover .draw-underline::after,
+  .group:focus-visible .draw-underline::after {
+    transform: scaleX(1);
+  }
+
+  .teaser-photo {
+    opacity: 0;
+    transform: scale(0.97);
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      transform var(--dur-base) var(--ease-out);
+  }
+
+  .group:hover .teaser-photo,
+  .group:focus-visible .teaser-photo {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.18em);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
